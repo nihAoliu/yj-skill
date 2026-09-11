@@ -1,0 +1,34 @@
+{
+  "name": "codex-feishu-notifier",
+  "version": "0.8.2+codex.20260911170721",
+  "description": "Send live-updating Feishu Card 2.0 lifecycle notifications through Codex hooks plus a persistent rollout watcher.",
+  "author": {
+    "name": "Local developer"
+  },
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "feishu",
+    "bot",
+    "notifications"
+  ],
+  "interface": {
+    "displayName": "Codex Feishu Notifier",
+    "shortDescription": "Send Codex status notices to Feishu.",
+    "longDescription": "Uses Codex lifecycle hooks plus a persistent rollout watcher to catch task starts, completions, attention states, and interruptions even when a hook is missed; cards are updated in place with local queuing, deduplication, and retry.",
+    "developerName": "Local developer",
+    "category": "Productivity",
+    "capabilities": [
+      "Lifecycle hooks",
+      "Persistent rollout lifecycle monitoring",
+      "Complete Card 2.0 JSON notifications",
+      "Live elapsed-time and current-step refresh",
+      "Interrupted-turn monitoring",
+      "Feishu webhook and application-bot notifications",
+      "Local retry queue"
+    ],
+    "defaultPrompt": [
+      "Configure my Codex completion notices for Feishu."
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "description": "Send Codex completion notices through a Feishu group bot.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3 \"${PLUGIN_ROOT}/scripts/notifier.py\" hook",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3 \"${PLUGIN_ROOT}/scripts/notifier.py\" hook",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3 \"${PLUGIN_ROOT}/scripts/notifier.py\" hook",
+            "timeout": 40,
+            "statusMessage": "Queueing Feishu completion notice"
+          }
+        ]
+      }
+    ],
+    "Interrupt": [
+      {"hooks": [{"type": "command", "command": "/usr/bin/python3 \"${PLUGIN_ROOT}/scripts/notifier.py\" hook", "timeout": 3}]}
+    ]
+  }
+}
