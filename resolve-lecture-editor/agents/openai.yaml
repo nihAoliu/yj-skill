@@ -1,0 +1,4 @@
+interface:
+  display_name: "Resolve 课程剪辑与 B-roll"
+  short_description: "在达芬奇中精剪课程、策划并生成 AI B-roll，添加可选标题"
+  default_prompt: "使用 $resolve-lecture-editor 处理我已放进 Resolve 时间线的课程素材，默认采用模式 B，先完成剪辑供我确认。"
