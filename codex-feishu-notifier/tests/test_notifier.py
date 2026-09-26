@@ -454,7 +454,7 @@ class NotifierTests(unittest.TestCase):
         content = json.loads(arguments[arguments.index("--content") + 1])
         self.assertEqual("2.0", content["schema"])
         self.assertEqual("green", content["header"]["template"])
-        self.assertEqual("卡片接入", content["header"]["title"]["content"])
+        self.assertEqual(f"【{notifier.local_device_name()}】卡片接入", content["header"]["title"]["content"])
         serialized = json.dumps(content, ensure_ascii=False)
         self.assertIn("GPT-5.6 Sol · 极高", serialized)
         self.assertIn("18.6K", serialized)
