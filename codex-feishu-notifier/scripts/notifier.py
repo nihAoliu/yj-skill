@@ -12,6 +12,8 @@ import json
 import os
 from pathlib import Path
 import sqlite3
+import socket
+from functools import lru_cache
 import subprocess
 import sys
 import tempfile
@@ -1129,6 +1131,25 @@ def result_summary(
     return "Codex 已结束本轮处理；请在任务中查看最终回复。"
 
 
+@lru_cache(maxsize=1)
+def local_device_name() -> str:
+    if sys.platform == "darwin":
+        try:
+            result = subprocess.run(
+                ["/usr/sbin/scutil", "--get", "ComputerName"],
+                capture_output=True, text=True, timeout=2,
+            )
+            if result.returncode == 0 and result.stdout.strip():
+                return compact_preview(result.stdout.strip(), 48)
+        except (OSError, subprocess.TimeoutExpired):
+            pass
+    return compact_preview(socket.gethostname(), 48) or "未知设备"
+
+
+def display_device_name(config: dict[str, Any]) -> str:
+    return compact_preview(str(config.get("device_name") or "").strip(), 48) or local_device_name()
+
+
 def build_notice(
     event: dict[str, Any],
     config: dict[str, Any],
@@ -1170,6 +1191,7 @@ def build_notice(
     metadata = transcript_execution_metadata(event)
     return {
         "status": status,
+        "device_name": display_device_name(config),
         "task_name": display_conversation_name(event, config),
         "project_name": display_project_name(event, config),
         "model_label": format_model_label(
@@ -1220,6 +1242,7 @@ def build_running_notice(
     )
     return {
         "status": "running",
+        "device_name": display_device_name(config),
         "task_name": display_conversation_name(event, config),
         "project_name": display_project_name(event, config),
         "model_label": model_label,
@@ -1304,6 +1327,7 @@ def codex_task_card_content(notice: dict[str, Any]) -> dict[str, Any]:
         },
     }
     style = styles.get(status, styles["running"])
+    device_name = compact_preview(str(notice.get("device_name") or local_device_name()), 48)
     task_name = compact_preview(str(notice.get("task_name") or "未命名对话"), 80)
     project_name = compact_preview(str(notice.get("project_name") or "Codex"), 80)
     model_label = lark_md_escape(notice.get("model_label") or "未记录", 80)
@@ -1489,11 +1513,11 @@ def codex_task_card_content(notice: dict[str, Any]) -> dict[str, Any]:
             "update_multi": True,
             "width_mode": "default",
             "enable_forward": True,
-            "summary": {"content": f"{style['summary']}：{task_name}"},
+            "summary": {"content": f"【{device_name}】{style['summary']}：{task_name}"},
         },
         "header": {
             "template": str(style["header"]),
-            "title": {"tag": "plain_text", "content": task_name},
+            "title": {"tag": "plain_text", "content": f"【{device_name}】{task_name}"},
             "subtitle": {
                 "tag": "plain_text",
                 "content": f"{project_name} · {subtitle_time}",
